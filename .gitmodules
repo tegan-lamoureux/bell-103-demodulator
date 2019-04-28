@@ -1,3 +1,0 @@
-[submodule "external_libraries/libwav"]
-	path = external_libraries/libwav
-	url = https://github.com/brglng/libwav

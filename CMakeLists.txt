@@ -29,29 +29,11 @@ set(
 )
 
 
-#######################
-#### Required Libraries
+##############
+#### Libraries
 
-# rapidjson located locally.
-#include_directories("${CMAKE_SOURCE_DIR}/external_libraries")
-
-#find_package(Curses REQUIRED)
-#if (Curses_FOUND)
-#    include_directories(${CURSES_INCLUDE_DIR})
-#endif()
-
-#find_package(CURL REQUIRED)
-#if (CURL_FOUND)
-#    include_directories(${CURL_INCLUDE_DIR})
-#endif()
-
-#set(
-#    common_libs
-#
-#    ${CMAKE_THREAD_LIBS_INIT}
-#    ${CURSES_LIBRARIES}
-#    ${CURL_LIBRARIES}
-#)
+# libwav located locally as a submodule
+#add_subdirectory("${CMAKE_SOURCE_DIR}/external_libraries/libwav/")
 
 
 ######################
@@ -64,8 +46,8 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/tests")
 include(GoogleTest)
 
 
-#################
-#### Build Config
+###################
+#### Build Main App
 
 set(CMAKE_CXX_STANDARD 17)
 
@@ -75,17 +57,21 @@ add_executable(
     ${app_sources}
 )
 
-#target_link_libraries(
-#    ${app}
-#
-#    ${common_libs}
-#    ${backend}
-#    ${ui}
-#)
+target_include_directories(
+	${app} PUBLIC
+
+#	${CMAKE_SOURCE_DIR}/external_libraries/libwav/src/include
+)
+
+target_link_libraries(
+    ${app}
+
+#	wav #libwav cmake project name
+)
 
 
-#################
-#### Tests Config
+################
+#### Build Tests
 
 add_executable(
     ${tests}
@@ -97,13 +83,13 @@ target_include_directories(
 	${tests} PUBLIC
 
 	${CMAKE_SOURCE_DIR}/src
+#	${CMAKE_SOURCE_DIR}/external_libraries/libwav/src/include
 )
 
 target_link_libraries(
     ${tests}
 
     gtest_main
-#    ${common_libs}
-#    ${backend}
+#	wav #libwav cmake project name
 )
 
