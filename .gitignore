@@ -1,0 +1,13 @@
+*.autosave
+*.swp
+*.o
+*.config
+*.creator
+*.user
+*.files
+*.includes
+*.pem
+*.dat
+build/
+test_data/
+notes
