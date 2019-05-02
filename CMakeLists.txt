@@ -16,10 +16,11 @@ set(
     app_sources
 
     # Headers
-    
+	src/wave.h    
 
     # Sources
     src/main.cpp
+	src/wave.cpp
 )
 
 set(

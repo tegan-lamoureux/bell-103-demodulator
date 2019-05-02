@@ -1,8 +1,8 @@
-#include <sndfile.hh>
+#include "wave.h"
 
 int main()
 {
-	SndfileHandle file;
+	WaveFile wave_file;
 
 	return 0;
 }
