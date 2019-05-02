@@ -32,8 +32,12 @@ set(
 ##############
 #### Libraries
 
-# libwav located locally as a submodule
-#add_subdirectory("${CMAKE_SOURCE_DIR}/external_libraries/libwav/")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/external_libraries")
+
+find_package(LibSndFile REQUIRED)
+if (LIBSNDFILE_FOUND)
+	include_directories(${LIBSNDFILE_INCLUDE_DIR})
+endif()
 
 
 ######################
@@ -60,13 +64,12 @@ add_executable(
 target_include_directories(
 	${app} PUBLIC
 
-#	${CMAKE_SOURCE_DIR}/external_libraries/libwav/src/include
 )
 
 target_link_libraries(
     ${app}
 
-#	wav #libwav cmake project name
+	${LIBSNDFILE_LIBRARIES}
 )
 
 
@@ -83,13 +86,12 @@ target_include_directories(
 	${tests} PUBLIC
 
 	${CMAKE_SOURCE_DIR}/src
-#	${CMAKE_SOURCE_DIR}/external_libraries/libwav/src/include
 )
 
 target_link_libraries(
     ${tests}
 
     gtest_main
-#	wav #libwav cmake project name
+	${LIBSNDFILE_LIBRARIES}
 )
 
