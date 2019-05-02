@@ -1,8 +1,3 @@
-# Taken from the following for use in my (Tegan) project: 
-#	https://github.com/neXyon/audaspace/blob/master/cmake/FindLibSndFile.cmake
-# Licensed with Apache License 2.0:
-#	https://github.com/neXyon/audaspace/blob/master/LICENSE
-#
 # - Try to find libsndfile
 # Once done, this will define
 #

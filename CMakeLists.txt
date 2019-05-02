@@ -32,7 +32,8 @@ set(
 ##############
 #### Libraries
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/external_libraries")
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/external_libraries")
+#set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/external_libraries")
 
 find_package(LibSndFile REQUIRED)
 if (LIBSNDFILE_FOUND)
@@ -46,7 +47,6 @@ endif()
 # Downloads GTest from Google at configure time, and builds it at
 # project compile time in the build directory. 
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/tests")
 include(GoogleTest)
 
 
