@@ -26,6 +26,7 @@ set(
     tests_sources
 
     tests/demod_tests.cpp
+	tests/libsndfile_tests.cpp
 )
 
 
