@@ -9,7 +9,8 @@ using namespace std;
 
 namespace {
 
-void create_wav_file(double left_frequency, double right_frequency, std::string filename) {
+// (Example taken from: https://github.com/erikd/libsndfile/blob/master/examples/make_sine.c)
+bool create_wav_file(double left_frequency, double right_frequency, std::string filename) {
     const double pi = 3.14159265358979323846264338;
     const long SAMPLE_RATE = 44100;
     const long SAMPLE_COUNT = (SAMPLE_RATE * 4);	/* 4 seconds */
@@ -24,7 +25,9 @@ void create_wav_file(double left_frequency, double right_frequency, std::string 
 
     buffer = static_cast<int*>(malloc (2 * SAMPLE_COUNT * sizeof (int)));
 
-    ASSERT_NE(nullptr, buffer);
+    if (!buffer) {
+        return false;
+    }
 
     memset(&sfinfo, 0, sizeof (sfinfo)) ;
 
@@ -35,8 +38,9 @@ void create_wav_file(double left_frequency, double right_frequency, std::string 
 
     file = sf_open (filename.c_str(), SFM_WRITE, &sfinfo);
 
-    ASSERT_NE(nullptr, file);
-    ASSERT_TRUE(sfinfo.channels == 1 || sfinfo.channels == 2);
+    if (!file) {
+        return false;
+    }
 
     if (sfinfo.channels == 1) {
         for (k = 0 ; k < SAMPLE_COUNT ; k++) {
@@ -52,10 +56,14 @@ void create_wav_file(double left_frequency, double right_frequency, std::string 
 
     long bytes_written = sf_write_int (file, buffer, sfinfo.channels * SAMPLE_COUNT);
 
-    ASSERT_EQ(bytes_written, sfinfo.channels * SAMPLE_COUNT);
+    if (bytes_written != sfinfo.channels * SAMPLE_COUNT) {
+        return false;
+    }
 
     sf_close (file) ;
     free (buffer) ;
+
+    return true;
 }
 
 // Can instantiate audio filter test.
@@ -71,7 +79,10 @@ TEST(AudioFilterTests, can_use_libsndfile) {
 // Can detect a .
 TEST(AudioFilterTests, can_detect_frequency_from_single_frequency_source) {
     // Make a 350 hz sine wave wave file to detect.
+    bool file_was_created = create_wav_file(350.0, 350.0, "sine_350hz.wav");
+    ASSERT_TRUE(file_was_created);
 
+    AudioFilters filters;
 }
 
 }
