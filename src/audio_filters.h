@@ -21,7 +21,7 @@ public:
      *
      * @note This was heavily influenced by the wonderful article at: https://www.embedded.com/design/configurable-systems/4024443/The-Goertzel-Algorithm
      */
-    bool detect_frequency_goertzel(double target_frequency, double target_threshold, double sample_rate, double block_size, std::vector<int> buffer);
+    bool detect_frequency_goertzel(double target_frequency, double target_threshold, double sample_rate, double block_size, std::vector<int> buffer) const;
 };
 
 #endif // AUDIO_FILTERS_H

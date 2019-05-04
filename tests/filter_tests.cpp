@@ -4,6 +4,7 @@
 #include <sndfile.h>
 #include <string>
 #include <cmath>
+#include <vector>
 
 using namespace std;
 
@@ -82,7 +83,11 @@ TEST(AudioFilterTests, can_detect_frequency_from_single_frequency_source) {
     bool file_was_created = create_wav_file(350.0, 350.0, "sine_350hz.wav");
     ASSERT_TRUE(file_was_created);
 
+    // Load my sine wave // FIXME: just make this a local buffer, I don't need to read from file?
+    vector<int> sample_buffer;
+
     AudioFilters filters;
+    filters.detect_frequency_goertzel(350.0, 1, 44100, 1000, sample_buffer);
 }
 
 }

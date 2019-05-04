@@ -7,7 +7,7 @@ AudioFilters::AudioFilters()
 
 }
 
-bool AudioFilters::detect_frequency_goertzel(double target_frequency, double target_threshold, double sample_rate, double block_size, std::vector<int> buffer)
+bool AudioFilters::detect_frequency_goertzel(double target_frequency, double target_threshold, double sample_rate, double block_size, std::vector<int> buffer) const
 {
     // Sanity check, we must be able to process as many samples as there are bins.
     if (buffer.size() < block_size) {
