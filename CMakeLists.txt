@@ -16,18 +16,22 @@ set(
     app_sources
 
     # Headers
-	src/wave.h    
+    src/audio_filters.h
+    src/wave.h
 
     # Sources
-    src/main.cpp
-	src/wave.cpp
+    src/audio_filters.cpp
+    src/wave.cpp
 )
 
 set(
     tests_sources
 
+    ${app_sources}
+
     tests/demod_tests.cpp
-	tests/libsndfile_tests.cpp
+    tests/filter_tests.cpp
+    tests/libsndfile_tests.cpp
 )
 
 
@@ -39,7 +43,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/external_libraries")
 
 find_package(LibSndFile REQUIRED)
 if (LIBSNDFILE_FOUND)
-	include_directories(${LIBSNDFILE_INCLUDE_DIR})
+    include_directories(${LIBSNDFILE_INCLUDE_DIR})
 endif()
 
 
@@ -60,18 +64,18 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(
     ${app}
 
+    src/main.cpp
     ${app_sources}
 )
 
-target_include_directories(
-	${app} PUBLIC
-
-)
+#target_include_directories(
+#    ${app} PUBLIC
+#)
 
 target_link_libraries(
     ${app}
 
-	${LIBSNDFILE_LIBRARIES}
+    ${LIBSNDFILE_LIBRARIES}
 )
 
 
@@ -85,15 +89,15 @@ add_executable(
 )
 
 target_include_directories(
-	${tests} PUBLIC
+    ${tests} PUBLIC
 
-	${CMAKE_SOURCE_DIR}/src
+    ${CMAKE_SOURCE_DIR}/src
 )
 
 target_link_libraries(
     ${tests}
 
     gtest_main
-	${LIBSNDFILE_LIBRARIES}
+    ${LIBSNDFILE_LIBRARIES}
 )
 
