@@ -16,11 +16,11 @@ set(
     app_sources
 
     # Headers
-    src/audio_filters.h
+    src/goertzel_filter.h
     src/wave.h
 
     # Sources
-    src/audio_filters.cpp
+    src/goertzel_filter.cpp
     src/wave.cpp
 )
 

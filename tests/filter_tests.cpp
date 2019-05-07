@@ -1,6 +1,6 @@
 #include "gtest/gtest.h"
 
-#include "audio_filters.h"
+#include "goertzel_filter.h"
 #include <sndfile.h>
 #include <string>
 #include <cmath>
@@ -67,11 +67,11 @@ bool create_wav_file(double left_frequency, double right_frequency, std::string 
     return true;
 }
 
-// Can instantiate audio filter test.
+// Can instantiate goertzel filter test.
 TEST(AudioFilterTests, can_use_libsndfile) {
     bool got_this_far = true;
 
-    AudioFilters filters;
+    GoertzelFilter filter(1, 1, 1, 1);
 
     ASSERT_TRUE(got_this_far);
 }
@@ -84,10 +84,10 @@ TEST(AudioFilterTests, can_detect_frequency_from_single_frequency_source) {
     ASSERT_TRUE(file_was_created);
 
     // Load my sine wave // FIXME: just make this a local buffer, I don't need to read from file?
-    vector<int> sample_buffer;
+    vector<int> sample_buffer = {10};
 
-    AudioFilters filters;
-    filters.detect_frequency_goertzel(350.0, 1, 44100, 1000, sample_buffer);
+    GoertzelFilter filter(350.0, 1000, 44100, 1);
+    ASSERT_TRUE(filter.detect_frequency(sample_buffer));
 }
 
 }
