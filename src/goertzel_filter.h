@@ -24,15 +24,22 @@ public:
      * @param buffer of the sample.
      * @returns true if the target frequency was detected, otherwise false.
      */
-    bool detect_frequency(std::vector<int> buffer) const;
+    bool detect_frequency(std::vector<double>& buffer) const;
+
+    /**
+     * @brief Run filter setup on buffer for detection.
+     * @param buffer of the sample.
+     * @returns magnitude of the detection filter.
+     */
+    double filter_magnitude(std::vector<double>& buffer) const;
 
 private:
-    const int K;
-    const double W;
-    const double cosine;
-    const double coefficient;
-    const double bins;
-    const double threshold;
+    int K;
+    double W;
+    double cosine;
+    double coefficient;
+    double bins;
+    double threshold;
 };
 
 #endif

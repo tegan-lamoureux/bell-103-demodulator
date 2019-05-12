@@ -44,8 +44,7 @@ TEST(LibSndFileTests, can_create_and_save_wav_file) {
     const long SAMPLE_RATE = 44100;
     const long SAMPLE_COUNT = (SAMPLE_RATE * 4);	/* 4 seconds */
     const long AMPLITUDE = (1.0 * 0x7F000000);
-    const double LEFT_FREQ = (350.0 / SAMPLE_RATE);
-    const double RIGHT_FREQ = (444.0 / SAMPLE_RATE);
+    const double FREQ = (350.0 / SAMPLE_RATE);
 
     SNDFILE	*file ;
     SF_INFO	sfinfo ;
@@ -60,24 +59,15 @@ TEST(LibSndFileTests, can_create_and_save_wav_file) {
 
     sfinfo.samplerate	= SAMPLE_RATE ;
     sfinfo.frames		= SAMPLE_COUNT ;
-    sfinfo.channels		= 2 ;
+    sfinfo.channels		= 1 ;
     sfinfo.format		= (SF_FORMAT_WAV | SF_FORMAT_PCM_24) ;
 
-    file = sf_open ("sine.wav", SFM_WRITE, &sfinfo);
+    file = sf_open ("sine_350hz.wav", SFM_WRITE, &sfinfo);
 
     ASSERT_NE(nullptr, file);
-    ASSERT_TRUE(sfinfo.channels == 1 || sfinfo.channels == 2);
 
-    if (sfinfo.channels == 1) {
-        for (k = 0 ; k < SAMPLE_COUNT ; k++) {
-            buffer [k] = AMPLITUDE * sin (LEFT_FREQ * 2 * k * pi) ;
-        }
-    }
-    else if (sfinfo.channels == 2) {
-        for (k = 0 ; k < SAMPLE_COUNT ; k++) {
-            buffer [2 * k] = AMPLITUDE * sin (LEFT_FREQ * 2 * k * pi) ;
-            buffer [2 * k + 1] = AMPLITUDE * sin (RIGHT_FREQ * 2 * k * pi) ;
-        }
+    for (k = 0 ; k < SAMPLE_COUNT ; k++) {
+        buffer [k] = AMPLITUDE * sin (FREQ * 2 * k * pi) ;
     }
 
     long bytes_written = sf_write_int (file, buffer, sfinfo.channels * SAMPLE_COUNT);

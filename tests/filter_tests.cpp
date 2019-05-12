@@ -10,64 +10,7 @@ using namespace std;
 
 namespace {
 
-// (Example taken from: https://github.com/erikd/libsndfile/blob/master/examples/make_sine.c)
-bool create_wav_file(double left_frequency, double right_frequency, std::string filename) {
-    const double pi = 3.14159265358979323846264338;
-    const long SAMPLE_RATE = 44100;
-    const long SAMPLE_COUNT = (SAMPLE_RATE * 4);	/* 4 seconds */
-    const long AMPLITUDE = (1.0 * 0x7F000000);
-    const double LEFT_FREQ = (left_frequency / SAMPLE_RATE);
-    const double RIGHT_FREQ = (right_frequency / SAMPLE_RATE);
-
-    SNDFILE	*file ;
-    SF_INFO	sfinfo ;
-    int		k ;
-    int	*buffer ;
-
-    buffer = static_cast<int*>(malloc (2 * SAMPLE_COUNT * sizeof (int)));
-
-    if (!buffer) {
-        return false;
-    }
-
-    memset(&sfinfo, 0, sizeof (sfinfo)) ;
-
-    sfinfo.samplerate	= SAMPLE_RATE ;
-    sfinfo.frames		= SAMPLE_COUNT ;
-    sfinfo.channels		= 2 ;
-    sfinfo.format		= (SF_FORMAT_WAV | SF_FORMAT_PCM_24) ;
-
-    file = sf_open (filename.c_str(), SFM_WRITE, &sfinfo);
-
-    if (!file) {
-        return false;
-    }
-
-    if (sfinfo.channels == 1) {
-        for (k = 0 ; k < SAMPLE_COUNT ; k++) {
-            buffer [k] = AMPLITUDE * sin (LEFT_FREQ * 2 * k * pi) ;
-        }
-    }
-    else if (sfinfo.channels == 2) {
-        for (k = 0 ; k < SAMPLE_COUNT ; k++) {
-            buffer [2 * k] = AMPLITUDE * sin (LEFT_FREQ * 2 * k * pi) ;
-            buffer [2 * k + 1] = AMPLITUDE * sin (RIGHT_FREQ * 2 * k * pi) ;
-        }
-    }
-
-    long bytes_written = sf_write_int (file, buffer, sfinfo.channels * SAMPLE_COUNT);
-
-    if (bytes_written != sfinfo.channels * SAMPLE_COUNT) {
-        return false;
-    }
-
-    sf_close (file) ;
-    free (buffer) ;
-
-    return true;
-}
-
-// Can instantiate goertzel filter test.
+// Can instantiate goertzel filter.
 TEST(AudioFilterTests, can_use_libsndfile) {
     bool got_this_far = true;
 
@@ -77,17 +20,48 @@ TEST(AudioFilterTests, can_use_libsndfile) {
 }
 
 
-// Can detect a .
+// Can detect a frequency using the filter. Relies on LibSndFileTests.can_create_and_save_wav_file
+// for the test data.
 TEST(AudioFilterTests, can_detect_frequency_from_single_frequency_source) {
-    // Make a 350 hz sine wave wave file to detect.
-    bool file_was_created = create_wav_file(350.0, 350.0, "sine_350hz.wav");
-    ASSERT_TRUE(file_was_created);
+    SNDFILE* file;
+    SF_INFO sfinfo;
+    vector<double> filter_samples;
 
-    // Load my sine wave // FIXME: just make this a local buffer, I don't need to read from file?
-    vector<int> sample_buffer = {10};
+    sfinfo.samplerate	= 44100;
+    sfinfo.frames		= (44100 * 4);
+    sfinfo.channels		= 1;
+    sfinfo.format		= (SF_FORMAT_WAV | SF_FORMAT_PCM_24);
 
-    GoertzelFilter filter(350.0, 1000, 44100, 1);
-    ASSERT_TRUE(filter.detect_frequency(sample_buffer));
+    file = sf_open ("sine_350hz.wav", SFM_READ, &sfinfo);
+
+    ASSERT_NE(nullptr, file); // Check the file opened.
+
+    sf_count_t samples_read = 0;
+    double samples[1000];
+
+    samples_read = sf_read_double(file, samples, 1000);
+    filter_samples.assign(samples, samples+1000);
+
+    // 44.1 kHz and block size of 320 give bin width of 137 Hz.
+
+    // Test at target frequency
+    GoertzelFilter filter(350.0, 320, 44100, 0);
+    ASSERT_TRUE(filter.detect_frequency(filter_samples));
+
+    // Prove bin width.
+    GoertzelFilter filter_same_bin1(350.0 - (sfinfo.samplerate / 320 + 10), 320, 44100, 0);
+    GoertzelFilter filter_same_bin2(350.0 + (sfinfo.samplerate / 320 - 10), 320, 44100, 0);
+    ASSERT_EQ(filter_same_bin1.filter_magnitude(filter_samples), filter_same_bin2.filter_magnitude(filter_samples));
+    ASSERT_EQ(filter_same_bin1.filter_magnitude(filter_samples), filter.filter_magnitude(filter_samples));
+    ASSERT_EQ(filter_same_bin2.filter_magnitude(filter_samples), filter.filter_magnitude(filter_samples));
+
+    // Test one bin off center.
+    GoertzelFilter filter2(200, 320, 44100, 0);
+    ASSERT_TRUE(filter2.detect_frequency(filter_samples));
+
+    // Test two bins off center.
+    GoertzelFilter filter3(60, 320, 44100, 0);
+    ASSERT_TRUE(filter3.detect_frequency(filter_samples));
 }
 
 }
