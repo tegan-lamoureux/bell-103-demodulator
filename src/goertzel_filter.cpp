@@ -5,7 +5,7 @@
 // Set up constants for filter.
 GoertzelFilter::GoertzelFilter(double target_frequency, double block_size, double sample_rate, double target_threshold)
 {
-    K = 0.5 + ((block_size * target_frequency) / sample_rate);
+	K = static_cast<int>(0.5 + ((block_size * target_frequency) / sample_rate));
     W = ((2.0 * M_PI * K) / block_size);
     cosine = cos(W);
     coefficient = 2.0 * cosine;
