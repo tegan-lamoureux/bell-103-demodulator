@@ -19,7 +19,6 @@ set(
     src/goertzel_filter.h
 
     # Sources
-    src/main.cpp
     src/goertzel_filter.cpp
 )
 
@@ -62,6 +61,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(
     ${app}
 
+    src/main.cpp
     ${app_sources}
 )
 

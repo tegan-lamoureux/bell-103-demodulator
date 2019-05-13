@@ -25,9 +25,9 @@ TEST(LibSndFileTests, can_open_wav_file) {
 	SNDFILE* file;
 	SF_INFO sfinfo;
 	
-	sfinfo.samplerate	= 44100;
-	sfinfo.frames		= (44100 * 4);
-	sfinfo.channels		= 2;
+    sfinfo.samplerate	= 48000;
+    sfinfo.frames		= (48000 * 4);
+    sfinfo.channels		= 1;
 	sfinfo.format		= (SF_FORMAT_WAV | SF_FORMAT_PCM_24);
 
 	file = sf_open ("../data/lamoureux.wav", SFM_READ, &sfinfo);
@@ -37,14 +37,14 @@ TEST(LibSndFileTests, can_open_wav_file) {
 }
 
 
-// Test saving a wav file (generated dial-tone sine wave).
+// Test saving a wav file
 // (Example taken from: https://github.com/erikd/libsndfile/blob/master/examples/make_sine.c)
 TEST(LibSndFileTests, can_create_and_save_wav_file) {
     const double pi = 3.14159265358979323846264338;
-    const long SAMPLE_RATE = 44100;
+    const long SAMPLE_RATE = 48000;
     const long SAMPLE_COUNT = (SAMPLE_RATE * 4);	/* 4 seconds */
     const long AMPLITUDE = (1.0 * 0x7F000000);
-    const double FREQ = (1070.0 / SAMPLE_RATE);
+    const double FREQ = (2025.0 / SAMPLE_RATE);
 
     SNDFILE	*file ;
     SF_INFO	sfinfo ;
@@ -62,7 +62,7 @@ TEST(LibSndFileTests, can_create_and_save_wav_file) {
     sfinfo.channels		= 1 ;
     sfinfo.format		= (SF_FORMAT_WAV | SF_FORMAT_PCM_24) ;
 
-    file = sf_open ("sine_1070hz.wav", SFM_WRITE, &sfinfo);
+    file = sf_open ("2025.wav", SFM_WRITE, &sfinfo);
 
     ASSERT_NE(nullptr, file);
 

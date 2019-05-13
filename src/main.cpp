@@ -23,8 +23,6 @@ vector<double> load_mono_wave_file(string filename, double sample_rate);
  */
 string demodulate_signal(vector<double>& buffer_to_decode, double sample_rate);
 
-
-
 int main(int argc, char* argv[])
 {
     if (argc != 3 || atof(argv[2]) == 0.0) {
@@ -40,7 +38,7 @@ int main(int argc, char* argv[])
     vector<double> buffer_to_decode = load_mono_wave_file(filename, sample_rate);
 
     // Demodulate and print the message.
-    cout << "Detected:" << demodulate_signal(buffer_to_decode, sample_rate) << endl;
+    cout << demodulate_signal(buffer_to_decode, sample_rate) << endl;
 
     return 0;
 }
@@ -80,28 +78,44 @@ vector<double> load_mono_wave_file(string filename, double sample_rate) {
 
 
 string demodulate_signal(vector<double>& buffer_to_decode, double sample_rate) {
-    const double detection_threshold = 0.8;
-    const int block_size = 120;
+    const int block_size = 160;
 
-    GoertzelFilter mark(1270, block_size, sample_rate, detection_threshold);
-    GoertzelFilter space(1070, block_size, sample_rate, detection_threshold);
+    GoertzelFilter mark(2225, block_size, sample_rate, 0);
+    GoertzelFilter space(2025, block_size, sample_rate, 0);
 
     string decoded_message = "";
+    unsigned int bit_number = 0;
+    uint8_t decoded_byte = 0;
 
     // Move along the main sample vector and take subsamples of 160 each, then run
     // mark and space detection, accumulating message.
     for (int location = 0; location < buffer_to_decode.size(); location += 160) {
+        if (bit_number == 0 || bit_number == 9) {
+            bit_number++;
+            continue; // Hack for start/stop bit.
+        }
+
+        if (bit_number >= 9) {
+            decoded_message += static_cast<char>(decoded_byte);
+            bit_number = 0;
+            decoded_byte = 0;
+            bit_number++;
+            continue;
+        }
+
         auto subsample_start = buffer_to_decode.begin() + location;
         auto subsample_end = buffer_to_decode.begin() + location + 160;
 
         vector<double> subsample(subsample_start, subsample_end);
 
-        if (mark.detect_frequency(subsample)) {
-            decoded_message.append("1");
+        if (mark.filter_magnitude(subsample) > space.filter_magnitude(subsample)) {
+            decoded_byte = decoded_byte | (1 << (bit_number - 1));
         }
-        else if(space.detect_frequency(subsample)) {
-            decoded_message.append("0");
+        else {
+            decoded_byte = decoded_byte & ~(1 << (bit_number - 1));
         }
+
+        bit_number++;
     }
 
     return decoded_message;

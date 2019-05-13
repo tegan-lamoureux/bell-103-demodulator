@@ -34,7 +34,7 @@ public:
     double filter_magnitude(std::vector<double>& buffer) const;
 
 private:
-    int K;
+    double K;
     double W;
     double cosine;
     double coefficient;
