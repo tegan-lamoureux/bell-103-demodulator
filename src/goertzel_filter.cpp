@@ -2,9 +2,9 @@
 
 #include <cmath>
 
-// Set up constants for filter.
 GoertzelFilter::GoertzelFilter(double target_frequency, double block_size, double sample_rate, double target_threshold)
 {
+    // Set up constants for filter.
     K = ((block_size * target_frequency) / sample_rate);
     W = ((2.0 * M_PI * K) / block_size);
     cosine = cos(W);
@@ -40,7 +40,6 @@ double GoertzelFilter::filter_magnitude(std::vector<double>& buffer) const
     return magnitude;
 }
 
-bool GoertzelFilter::detect_frequency(std::vector<double>& buffer) const
-{
+bool GoertzelFilter::detect_frequency(std::vector<double>& buffer) const {
     return this->filter_magnitude(buffer) > this->threshold;
 }
