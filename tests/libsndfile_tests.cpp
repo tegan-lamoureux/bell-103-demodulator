@@ -44,7 +44,7 @@ TEST(LibSndFileTests, can_create_and_save_wav_file) {
     const long SAMPLE_RATE = 44100;
     const long SAMPLE_COUNT = (SAMPLE_RATE * 4);	/* 4 seconds */
     const long AMPLITUDE = (1.0 * 0x7F000000);
-    const double FREQ = (350.0 / SAMPLE_RATE);
+    const double FREQ = (1070.0 / SAMPLE_RATE);
 
     SNDFILE	*file ;
     SF_INFO	sfinfo ;
@@ -62,7 +62,7 @@ TEST(LibSndFileTests, can_create_and_save_wav_file) {
     sfinfo.channels		= 1 ;
     sfinfo.format		= (SF_FORMAT_WAV | SF_FORMAT_PCM_24) ;
 
-    file = sf_open ("sine_350hz.wav", SFM_WRITE, &sfinfo);
+    file = sf_open ("sine_1070hz.wav", SFM_WRITE, &sfinfo);
 
     ASSERT_NE(nullptr, file);
 

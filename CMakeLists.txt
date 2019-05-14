@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.2.0)
 
 project(Bell103Demod C CXX)
 
-set(target_name "demodulator")
+set(target_name "bell_103_demodulator")
 
 # Target Names
 set(app "${target_name}")
@@ -17,11 +17,10 @@ set(
 
     # Headers
     src/goertzel_filter.h
-    src/wave.h
 
     # Sources
+    src/main.cpp
     src/goertzel_filter.cpp
-    src/wave.cpp
 )
 
 set(
@@ -29,7 +28,6 @@ set(
 
     ${app_sources}
 
-    tests/demod_tests.cpp
     tests/filter_tests.cpp
     tests/libsndfile_tests.cpp
 )
@@ -64,7 +62,6 @@ set(CMAKE_CXX_STANDARD 17)
 add_executable(
     ${app}
 
-    src/main.cpp
     ${app_sources}
 )
 
